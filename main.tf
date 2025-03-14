@@ -24,33 +24,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
-  namespace  = "ingress-nginx"
-
-  create_namespace = true
-
-  set {
-    name  = "controller.replicaCount"
-    value = "2"
-  }
-
-  set {
-    name  = "controller.nodeSelector.kubernetes\\.io/os"
-    value = "linux"
-  }
-
-  set {
-    name  = "defaultBackend.nodeSelector.kubernetes\\.io/os"
-    value = "linux"
-  }
-}
-
 resource "helm_release" "postgres" {
   name       = "postgres"
-  chart      = "./postgresql-16.5.0.tgz"  # Указываем скачанный локальный файл
+  chart      = "./postgresql-16.5.0.tgz" 
   namespace  = "database"
   create_namespace = true
 
@@ -100,108 +76,11 @@ resource "helm_release" "redis" {
 
  resource "helm_release" "fastapi_app" {
   name       = "fastapi-app"
-  chart      = "./charts/fastapi"  # Указываем путь к локальному Helm-чарту (его нужно создать)
+  chart      = "./charts/fastapi" 
   namespace  = "app"
   create_namespace = true
-
-  set {
-    name  = "image.repository"
-    value = "vitmer/mlopsclassification-model"
-  }
-
-  set {
-    name  = "image.tag"
-    value = "latest"
-  }
-
-  set {
-    name  = "service.type"
-    value = "ClusterIP"
-  }
-
-  set {
-    name  = "service.port"
-    value = "8000"
-  }
-
-  set {
-    name  = "postgresql.host"
-    value = "postgres-postgresql"
-  }
-
-  set {
-    name  = "postgresql.username"
-    value = "admin"
-  }
-
-  set {
-    name  = "postgresql.password"
-    value = "adminpassword"
-  }
-
-  set {
-    name  = "redis.host"
-    value = "redis-master"
-  }
-
-  set {
-    name  = "redis.password"
-    value = "redispassword"
-  }
-
+  
   values = [
     file("./charts/fastapi/values.yaml")
   ]
-}
-
-resource "helm_release" "fastapi_ingress" {
-  name       = "fastapi-ingress"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
-  namespace  = "app"
-  create_namespace = true
-
-  set {
-    name  = "controller.replicaCount"
-    value = "2"
-  }
-
-  set {
-    name  = "controller.nodeSelector.kubernetes\\.io/os"
-    value = "linux"
-  }
-
-  set {
-    name  = "controller.ingressClassResource.name"
-    value = "nginx"
-  }
-
-  set {
-    name  = "controller.ingressClassResource.skip-crds"
-    value = "true"
-  }
-}
-
-resource "kubernetes_config_map" "example_config" {
-  metadata {
-    name      = "example-config"
-    namespace = "app"
-  }
-
-  data = {
-    "DATABASE_URL" = "postgresql://admin:adminpassword@postgres-postgresql:5432/appdb"
-    "REDIS_URL"    = "redis-master:6379"
-  }
-}
-
-resource "kubernetes_secret" "example_secret" {
-  metadata {
-    name      = "example-secret"
-    namespace = "app"
-  }
-
-  data = {
-    "REDIS_PASSWORD" = base64encode("redispassword")
-    "POSTGRES_PASSWORD" = base64encode("adminpassword")
-  }
 }
