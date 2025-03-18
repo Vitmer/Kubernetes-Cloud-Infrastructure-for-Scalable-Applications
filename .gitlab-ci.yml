@@ -1,23 +1,32 @@
-image: docker:latest
-
-services:
-  - docker:dind
-
 stages:
   - build
   - deploy
 
-default:
-  before_script:
-    - echo "Starting pipeline..."
+variables:
+  DOCKER_IMAGE: "vitmer/mlopsclassification-model"
+
+before_script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 build:
   stage: build
   script:
-    - docker build -t $DOCKER_IMAGE .
-    - docker push $DOCKER_IMAGE
+    - docker build -t $DOCKER_IMAGE:$CI_COMMIT_SHA .
+    - docker push $DOCKER_IMAGE:$CI_COMMIT_SHA
+  only:
+    changes:
+      - Dockerfile
+      - values.yaml
+  tags:
+    - docker
 
 deploy:
   stage: deploy
   script:
-    - echo "Deploying application"
+    - helm upgrade --install fastapi ./helm-chart -f values.yaml --set image.tag=$CI_COMMIT_SHA
+  only:
+    changes:
+      - values.yaml
+      - charts/**
+  tags:
+    - k8s
