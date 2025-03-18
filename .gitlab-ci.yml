@@ -6,7 +6,7 @@ variables:
   DOCKER_IMAGE: "vitmer/mlopsclassification-model"
 
 before_script:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin || { echo "Docker login failed"; exit 1; }
 
 build:
   stage: build
