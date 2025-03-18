@@ -51,26 +51,6 @@ resource "helm_release" "redis" {
   chart      = "./redis-20.11.3.tgz"
   namespace  = "cache"
   create_namespace = true
-
-  set {
-    name  = "auth.password"
-    value = "redispassword"
-  }
-
-  set {
-    name  = "replica.replicaCount"
-    value = "1"
-  }
-
-  set {
-    name  = "master.persistence.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "master.persistence.size"
-    value = "5Gi"
-  }
 }
 
 

@@ -1,23 +1,19 @@
 variable "resource_group_name" {
-  description = "Имя группы ресурсов"
+  description = "Resource group name"
   type        = string
-  default     = "rg-k8s-infra"
 }
 
 variable "location" {
-  description = "Регион Azure"
+  description = "Azure region"
   type        = string
-  default     = "West Europe"
 }
 
 variable "aks_cluster_name" {
-  description = "Имя AKS-кластера"
+  description = "AKS cluster name"
   type        = string
-  default     = "aks-cluster"
 }
 
 variable "node_count" {
-  description = "Количество узлов в кластере"
+  description = "Number of nodes in the cluster"
   type        = number
-  default     = 3
 }
