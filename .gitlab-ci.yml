@@ -1,0 +1,16 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+  - test
+
+test-auth:
+  stage: test
+  script:
+    - echo "Проверка авторизации в Docker Hub"
+    - echo "DOCKER_USERNAME: $DOCKER_USERNAME"
+    - echo "DOCKER_PASSWORD (маскирован): ${#DOCKER_PASSWORD} символов"
+    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+    - echo "✅ Авторизация успешна!"
