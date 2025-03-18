@@ -1,18 +1,32 @@
-image: docker:latest
-
-services:
-  - docker:dind
-
 stages:
-  - test
+  - build
+  - deploy
 
-test-auth:
-  stage: test
+variables:
+  DOCKER_IMAGE: "vitmer/mlopsclassification-model"
+
+before_script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+build:
+  stage: build
   script:
-    - echo "Проверка авторизации в Docker Hub"
-    - echo "DOCKER_USERNAME: $DOCKER_USERNAME"
-    - echo "DOCKER_PASSWORD (маскирован): ${#DOCKER_PASSWORD} символов"
-    - docker --version  # Проверка версии Docker
-    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"  # Вход в Docker
-    - echo "✅ Авторизация успешна!"
-    
+    - docker build -t $DOCKER_IMAGE:$CI_COMMIT_SHA .
+    - docker push $DOCKER_IMAGE:$CI_COMMIT_SHA
+  only:
+    changes:
+      - Dockerfile
+      - values.yaml
+  tags:
+    - docker
+
+deploy:
+  stage: deploy
+  script:
+    - helm upgrade --install fastapi ./helm-chart -f values.yaml --set image.tag=$CI_COMMIT_SHA
+  only:
+    changes:
+      - values.yaml
+      - charts/**
+  tags:
+    - k8s
