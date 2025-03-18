@@ -12,6 +12,7 @@ test-auth:
     - echo "Проверка авторизации в Docker Hub"
     - echo "DOCKER_USERNAME: $DOCKER_USERNAME"
     - echo "DOCKER_PASSWORD (маскирован): ${#DOCKER_PASSWORD} символов"
-    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+    - docker --version  # Проверка версии Docker
+    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"  # Вход в Docker
     - echo "✅ Авторизация успешна!"
     
