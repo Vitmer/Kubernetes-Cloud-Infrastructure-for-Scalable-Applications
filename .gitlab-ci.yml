@@ -24,7 +24,7 @@ deploy:
   stage: deploy
   script:
     - echo "Deploying with Helm"
-    - helm upgrade --install fastapi ./charts/fastapi/templates -f ./charts/fastapi/values.yaml --set image.tag=$CI_COMMIT_SHA || { echo "Helm upgrade failed"; exit 1; }
+    - helm upgrade --install fastapi ./charts/fastapi -f ./charts/fastapi/values.yaml --set image.tag=$CI_COMMIT_SHA || { echo "Helm upgrade failed"; exit 1; }
   only:
     changes:
       - values.yaml
