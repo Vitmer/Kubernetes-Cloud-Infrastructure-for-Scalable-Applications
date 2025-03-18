@@ -7,8 +7,9 @@ stages:
   - build
   - deploy
 
-before_script:
-  - echo "Starting pipeline..."
+default:
+  before_script:
+    - echo "Starting pipeline..."
 
 build:
   stage: build
@@ -16,7 +17,7 @@ build:
     - docker build -t $DOCKER_IMAGE .
     - docker push $DOCKER_IMAGE
   only:
-    - main  # Выполнение только для ветки main
+    - main  # Только для ветки main
 
 deploy:
   stage: deploy
