@@ -16,12 +16,8 @@ build:
   script:
     - docker build -t $DOCKER_IMAGE .
     - docker push $DOCKER_IMAGE
-  only:
-    - main  # Только для ветки main
 
 deploy:
   stage: deploy
   script:
     - echo "Deploying application"
-  only:
-    - main
