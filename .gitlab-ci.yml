@@ -23,7 +23,7 @@ build:
 deploy:
   stage: deploy
   script:
-    - helm upgrade --install fastapi ./fastapi/helm-chart -f ./fastapi/values.yaml --set image.tag=$CI_COMMIT_SHA
+    helm upgrade --install fastapi ./charts/fastapi/templates -f ./charts/fastapi/values.yaml --set image.tag=$CI_COMMIT_SHA
   only:
     changes:
       - values.yaml
