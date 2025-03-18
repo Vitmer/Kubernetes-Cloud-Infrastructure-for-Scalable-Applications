@@ -31,3 +31,6 @@ deploy:
       - charts/fastapi/**
   tags:
     - k8s
+
+
+    
