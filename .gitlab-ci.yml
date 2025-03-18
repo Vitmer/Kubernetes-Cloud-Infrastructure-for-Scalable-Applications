@@ -14,3 +14,4 @@ test-auth:
     - echo "DOCKER_PASSWORD (маскирован): ${#DOCKER_PASSWORD} символов"
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
     - echo "✅ Авторизация успешна!"
+    
